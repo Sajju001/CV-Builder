@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProCV Builder</title>
+
+  <!-- Typography Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=EB+Garamond:wght@400;600;700;800&family=Playfair+Display:wght@600;700;800&family=Roboto:wght@400;500;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- html2pdf.js for Client-Side High-Quality A4 PDF Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+
+  <!-- Top Application Navigation Bar -->
+  <header class="app-header">
+    <div class="brand-container">
+      <div class="brand-logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+      </div>
+      <div>
+        <div class="brand-title">ProCV Builder</div>
+        <span class="brand-subtitle">Professional Cv Builder Tool</span>
+      </div>
+      <div class="status-pill" id="save-status-badge">
+        <span class="status-dot"></span> Autosaved
+      </div>
+    </div>
+
+    <!-- Quick Studio Actions -->
+    <div class="header-actions">
+      <!-- Layout Template Switcher -->
+      <div class="control-group-inline">
+        <label for="select-template-style">Layout:</label>
+        <select id="select-template-style" class="header-select">
+          <option value="corporate">🏢 Corporate B&W (ATS)</option>
+          <option value="twocolumn">📑 Modern Two-Column</option>
+          <option value="executive">👔 Executive Serif</option>
+          <option value="minimal">✨ Minimal Compact</option>
+        </select>
+      </div>
+
+      <!-- Accent Color Picker -->
+      <div class="control-group-inline">
+        <label for="select-color-theme">Accent:</label>
+        <select id="select-color-theme" class="header-select">
+          <option value="noir">⚫ Monochrome Noir</option>
+          <option value="navy">🟦 Corporate Navy</option>
+          <option value="emerald">🟩 Slate Emerald</option>
+          <option value="charcoal">🔘 Executive Charcoal</option>
+        </select>
+      </div>
+
+      <!-- Font Style Switcher -->
+      <div class="control-group-inline">
+        <label for="select-font-family">Font:</label>
+        <select id="select-font-family" class="header-select">
+          <option value="inter">Sans (Inter)</option>
+          <option value="garamond">Serif (EB Garamond)</option>
+          <option value="playfair">Display (Playfair)</option>
+          <option value="roboto">Modern (Roboto)</option>
+          <option value="merriweather">Classic (Merriweather)</option>
+        </select>
+      </div>
+
+      <div class="divider-v"></div>
+
+      <button id="btn-sample" class="btn btn-secondary" title="Populate realistic sample data">
+        ✨ Load Sample
+      </button>
+      <button id="btn-reset" class="btn btn-secondary" title="Clear all fields">
+        🔄 Reset
+      </button>
+      <button id="btn-print" class="btn btn-secondary" title="Print or save via system printer">
+        🖨️ Print
+      </button>
+      <button id="btn-pdf" class="btn btn-primary" title="Export exact A4 PDF document">
+        📥 Download A4 PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile View Navigation Tabs -->
+  <div class="mobile-view-tabs">
+    <button id="tab-btn-form" class="mobile-tab-btn active">✏️ Form Editor</button>
+    <button id="tab-btn-preview" class="mobile-tab-btn">👁️ Live Preview</button>
+  </div>
+
+  <!-- Main App Workspace -->
+  <main class="app-container">
+    
+    <!-- Left Column: Form Editor Panel -->
+    <aside class="form-panel" id="form-panel">
+      
+      <!-- Prominent Photo Upload Banner Box -->
+      <div class="photo-hero-card">
+        <div class="photo-hero-header">
+          <div class="photo-hero-title">
+            <span>📷 Profile Picture / Photo</span>
+            <span class="badge-tag">ATS Optional</span>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="chk-show-photo" checked />
+            <label for="chk-show-photo">Show Photo on CV</label>
+          </div>
+        </div>
+
+        <div class="photo-upload-zone" id="photo-drop-zone">
+          <div class="photo-preview-box-large" id="photo-preview-thumb">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+          <div class="photo-upload-info">
+            <div class="upload-btn-row">
+              <label for="input-photo-file" class="btn btn-sm btn-outline-dark cursor-pointer">
+                📁 Upload Photo
+              </label>
+              <button type="button" class="btn btn-sm btn-secondary-dark" id="btn-load-sample-avatar">
+                👤 Sample Avatar
+              </button>
+              <button type="button" class="btn btn-sm btn-danger-sm" id="btn-remove-photo">
+                ✕ Delete
+              </button>
+            </div>
+            <input type="file" id="input-photo-file" accept="image/*" class="hidden-file-input" />
+            <div class="photo-help-text">Drag & drop photo here or click upload (JPG, PNG)</div>
+          </div>
+        </div>
+
+        <!-- Photo Styling Controls -->
+        <div class="photo-style-controls">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="select-photo-shape">Photo Frame Shape</label>
+              <select id="select-photo-shape" class="input-sm">
+                <option value="square">Square Frame 🔳</option>
+                <option value="circle">Circular Frame ⭕</option>
+                <option value="rounded">Rounded Box ▢</option>
+                <option value="bordered">Bordered Box 🖼️</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="select-photo-size">Photo Display Size</label>
+              <select id="select-photo-size" class="input-sm">
+                <option value="medium">Medium (Standard)</option>
+                <option value="small">Small (Compact)</option>
+                <option value="large">Large (Prominent)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Section Accordions Container -->
+      <div class="form-sections-wrapper">
+
+        <!-- Section 1: Basic Information -->
+        <section class="form-section">
+          <div class="section-title">
+            <span>👤 Basic Information</span>
+            <span class="toggle-icon">➖</span>
+          </div>
+          <div class="section-body">
+            <div class="form-group">
+              <label for="input-fullName">Full Name *</label>
+              <input type="text" id="input-fullName" placeholder="Enter Your Full Name" />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="input-email">Email Address *</label>
+                <input type="email" id="input-email" placeholder="Enter Your Email Address" />
+              </div>
+              <div class="form-group">
+                <label for="input-phone">Phone / Contact Number *</label>
+                <input type="tel" id="input-phone" placeholder="Enter Your Phone / Contact Number" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="input-address">Address</label>
+              <input type="text" id="input-address" placeholder="Enter Your Complete Address" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Personal Profile (CNIC, Domicile, Religion, etc.) -->
+        <section class="form-section">
+          <div class="section-title">
+            <span>📋 Personal Profile (Official Information)</span>
+            <span class="toggle-icon">➖</span>
+          </div>
+          <div class="section-body">
+            <div class="checkbox-group" style="margin-bottom: 10px;">
+              <input type="checkbox" id="chk-show-personal" checked />
+              <label for="chk-show-personal">Display Personal Profile section on CV</label>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="input-fatherName">Father's Name</label>
+                <input type="text" id="input-fatherName" placeholder="Father's full name" />
+              </div>
+              <div class="form-group">
+                <label for="input-caste">Caste / Surname</label>
+                <input type="text" id="input-caste" placeholder="Enter Your Caste / Surname" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="input-cnic">CNIC / Passport Number</label>
+                <input type="text" id="input-cnic" placeholder="e.g. 41302-1234567-9" />
+              </div>
+              <div class="form-group">
+                <label for="input-dob">Date of Birth</label>
+                <input type="date" id="input-dob" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="input-domicile">Domicile</label>
+                <input type="text" id="input-domicile" placeholder="Domcile City / District" />
+              </div>
+              <div class="form-group">
+                <label for="input-maritalStatus">Marital Status</label>
+                <select id="input-maritalStatus">
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="input-nationality">Nationality</label>
+                <input type="text" id="input-nationality" placeholder="Nationality" />
+              </div>
+              <div class="form-group">
+                <label for="input-religion">Religion</label>
+                <input type="text" id="input-religion" placeholder="Religion" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Career Objective -->
+        <section class="form-section">
+          <div class="section-title">
+            <span>🎯 Career Objective & Summary</span>
+            <span class="toggle-icon">➖</span>
+          </div>
+          <div class="section-body">
+            <div class="form-group">
+              <label for="select-career-preset">Select Objective Template / Preset</label>
+              <select id="select-career-preset" class="form-control" style="margin-bottom: 8px;">
+                <option value="custom">-- Custom / Write My Own --</option>
+                <option value="software">💻 Software Engineer / IT Professional</option>
+                <option value="management">📊 Management & Operations</option>
+                <option value="fresh_graduate">🎓 Fresh Graduate / Entry Level</option>
+                <option value="administrative">🏢 Corporate / Administrative Officer</option>
+                <option value="finance">💰 Accounting & Finance Specialist</option>
+                <option value="customer_service">🎧 Customer Service & Client Relations</option>
+                <option value="teaching">📚 Education & Academic Teaching</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="input-career-objective">Objective Text (Editable)</label>
+              <textarea id="input-career-objective" rows="4" placeholder="Select a preset above or write your custom professional objective..."></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Work Experience -->
+        <section class="form-section">
+          <div class="section-title">
+            <span>💼 Work Experience</span>
+            <span class="toggle-icon">➖</span>
+          </div>
+          <div class="section-body">
+            <div id="experience-list-container">
+              <!-- Dynamic Experience Items -->
+            </div>
+            <button type="button" id="btn-add-experience" class="btn btn-add">
+              ➕ Add Work Experience
+            </button>
+          </div>
+        </section>
+
+        <!-- Section 5: Education -->
+        <section class="form-section">
+          <div class="section-title">
+            <span>🎓 Education & Qualifications</span>
+            <span class="toggle-icon">➖</span>
+          </div>
+          <div class="section-body">
+            <div id="education-list-container">
+              <!-- Dynamic Education Items -->
+            </div>
+            <button type="button" id="btn-add-education" class="btn btn-add">
+              ➕ Add Degree / Certificate
+            </button>
+          </div>
+        </section>
+
+        <!-- Section 6: Technical Skills -->
+        <section class="form-section">
+          <div class="section-title">
+            <span>⚡ Technical Skills & Core Competencies</span>
+            <span class="toggle-icon">➖</span>
+          </div>
+          <div class="section-body">
+            <div class="form-group">
+              <label for="input-skills">Skills List (Comma separated)</label>
+              <textarea id="input-skills" rows="3" placeholder="Describe Your Skills."></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Languages -->
+        <section class="form-section">
+          <div class="section-title">
+            <span>🗣️ Languages Spoken</span>
+            <span class="toggle-icon">➖</span>
+          </div>
+          <div class="section-body">
+            <div id="languages-list-container">
+              <!-- Dynamic Language Items -->
+            </div>
+            <button type="button" id="btn-add-language" class="btn btn-add">
+              ➕ Add Language
+            </button>
+          </div>
+        </section>
+
+        <!-- Section 8: Hobbies & Interests -->
+        <section class="form-section">
+          <div class="section-title">
+            <span>🎨 Hobbies & Activities</span>
+            <span class="toggle-icon">➖</span>
+          </div>
+          <div class="section-body">
+            <div class="form-group">
+              <label for="input-hobbies">Hobbies & Interests</label>
+              <input type="text" id="input-hobbies" placeholder="e.g. Open Source, Technical Blogging, Chess, Reading" />
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+    </aside>
+
+    <!-- Right Column: Live A4 Preview Canvas Panel -->
+    <section class="preview-panel hide-mobile" id="preview-panel">
+      
+      <!-- Studio Control Bar above Canvas -->
+      <div class="preview-toolbar">
+        <div class="toolbar-left">
+          <span class="canvas-indicator">
+            <span class="pulse-dot"></span> A4 Live Canvas
+          </span>
+          <span class="ats-score-badge" id="ats-score-badge">
+            ✓ ATS Score: <strong>98/100</strong>
+          </span>
+        </div>
+
+        <div class="zoom-controls">
+          <button id="btn-zoom-out" class="zoom-btn" title="Zoom Out">-</button>
+          <span id="zoom-level-text" class="zoom-level">100%</span>
+          <button id="btn-zoom-in" class="zoom-btn" title="Zoom In">+</button>
+          <button id="btn-zoom-reset" class="zoom-btn fit-btn" title="Fit to Screen">Fit</button>
+        </div>
+      </div>
+
+      <!-- Viewport Canvas Scroll Container -->
+      <div class="preview-viewport">
+        <!-- Exact A4 Paper Document Canvas -->
+        <article class="cv-paper template-corporate color-noir font-inter" id="cv-preview-paper">
+          <!-- Rendered dynamically by script.js -->
+        </article>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Application Engine -->
+  <script src="js/script.js"></script>
+</body>
+</html>
